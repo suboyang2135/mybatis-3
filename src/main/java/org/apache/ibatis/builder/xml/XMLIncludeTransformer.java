@@ -43,7 +43,12 @@ public class XMLIncludeTransformer {
     this.builderAssistant = builderAssistant;
   }
 
+  /**
+   * 将 <include /> 标签，替换成引用的 <sql />
+   * @param source
+   */
   public void applyIncludes(Node source) {
+    // 创建 variablesContext ，并将 configurationVariables 添加到 variablesContext 中
     Properties variablesContext = new Properties();
     Properties configurationVariables = configuration.getVariables();
     Optional.ofNullable(configurationVariables).ifPresent(variablesContext::putAll);

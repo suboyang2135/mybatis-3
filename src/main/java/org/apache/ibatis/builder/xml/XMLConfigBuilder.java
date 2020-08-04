@@ -104,10 +104,13 @@ public class XMLConfigBuilder extends BaseBuilder {
   }
 
   public Configuration parse() {
+    // 若已解析，抛出 BuilderException 异常
     if (parsed) {
       throw new BuilderException("Each XMLConfigBuilder can only be used once.");
     }
+    // 标记已解析
     parsed = true;
+    // 解析配置文件的 <configuration>
     parseConfiguration(parser.evalNode("/configuration"));
     return configuration;
   }
@@ -244,21 +247,27 @@ public class XMLConfigBuilder extends BaseBuilder {
 
   private void propertiesElement(XNode context) throws Exception {
     if (context != null) {
+      // 读取子标签为 Properties 对象
       Properties defaults = context.getChildrenAsProperties();
+      // 读取 resource 属性
       String resource = context.getStringAttribute("resource");
+      // 读取 url 属性
       String url = context.getStringAttribute("url");
       if (resource != null && url != null) {
         throw new BuilderException("The properties element cannot specify both a URL and a resource based property file reference.  Please specify one or the other.");
       }
+      // 读取本地 Properties 配置文件到 defaults 中
       if (resource != null) {
         defaults.putAll(Resources.getResourceAsProperties(resource));
-      } else if (url != null) {
+      } else if (url != null) { // 读取远程 Properties 配置文件到 defaults 中
         defaults.putAll(Resources.getUrlAsProperties(url));
       }
+      // 覆盖 configuration 中的 Properties 对象到 defaults 中
       Properties vars = configuration.getVariables();
       if (vars != null) {
         defaults.putAll(vars);
       }
+      // 设置 defaults 到 parser 和 configuration 中
       parser.setVariables(defaults);
       configuration.setVariables(defaults);
     }
